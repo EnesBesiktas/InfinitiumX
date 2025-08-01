@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import SearchTimeline from './SearchTimeline';
 
 const AIChat = ({ isVisible, onClose, onAISearch }) => {
   const [messages, setMessages] = useState([
@@ -12,6 +13,7 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
   
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -387,28 +389,39 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
+    setShowTimeline(true);
 
-    // AI yanıtını simüle et
+    // Timeline tamamlandığında çalışacak fonksiyon
+    const handleTimelineComplete = () => {
+      setShowTimeline(false);
+      
+      // AI yanıtını simüle et
+      setTimeout(() => {
+        const aiResponse = generateAIResponse(inputMessage);
+        
+        const aiMessage = {
+          id: Date.now() + 1,
+          type: 'ai',
+          content: aiResponse.message,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, aiMessage]);
+        setIsTyping(false);
+
+        // AI arama sonuçlarını ana sayfaya aktar
+        if (aiResponse.products.length > 0) {
+          onAISearch(inputMessage, aiResponse.products);
+        } else if (aiResponse.bundles.length > 0) {
+          onAISearch(inputMessage, [], aiResponse.bundles);
+        }
+      }, 500);
+    };
+
+    // Timeline'ı başlat
     setTimeout(() => {
-      const aiResponse = generateAIResponse(inputMessage);
-      
-      const aiMessage = {
-        id: Date.now() + 1,
-        type: 'ai',
-        content: aiResponse.message,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, aiMessage]);
-      setIsTyping(false);
-
-      // AI arama sonuçlarını ana sayfaya aktar
-      if (aiResponse.products.length > 0) {
-        onAISearch(inputMessage, aiResponse.products);
-      } else if (aiResponse.bundles.length > 0) {
-        onAISearch(inputMessage, [], aiResponse.bundles);
-      }
-    }, 1500);
+      handleTimelineComplete();
+    }, 6000); // 6 saniye timeline süresi
   };
 
   const handleKeyPress = (e) => {
@@ -421,126 +434,137 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-lg mb-4">
-      {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-200">
-        <div className="flex items-center">
-          <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center mr-2">
-            <span className="text-white text-xs">🤖</span>
+    <>
+      <div className="bg-white border border-gray-200 rounded-lg shadow-lg mb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between p-3 border-b border-gray-200">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center mr-2">
+              <span className="text-white text-xs">🤖</span>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">AI Asistan</h3>
+              <p className="text-xs text-gray-600">Size nasıl yardımcı olabilirim?</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900">AI Asistan</h3>
-            <p className="text-xs text-gray-600">Size nasıl yardımcı olabilirim?</p>
-          </div>
-        </div>
-        
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Messages */}
-      <div className="h-48 overflow-y-auto p-3 space-y-3">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+          
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <div className={`max-w-[85%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
-              {message.type === 'ai' && (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Messages */}
+        <div className="h-48 overflow-y-auto p-3 space-y-3">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`max-w-[85%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
+                {message.type === 'ai' && (
+                  <div className="flex items-center mb-1">
+                    <div className="w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center mr-1">
+                      <span className="text-white text-xs">🤖</span>
+                    </div>
+                    <span className="text-xs text-gray-500">AI Asistan</span>
+                  </div>
+                )}
+                
+                <div
+                  className={`p-2 rounded-lg text-xs ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white ml-auto'
+                      : 'bg-gray-100 text-gray-900'
+                  }`}
+                >
+                  <p className="leading-relaxed">{message.content}</p>
+                </div>
+                
+                <div className={`text-xs text-gray-500 mt-1 ${
+                  message.type === 'user' ? 'text-right' : 'text-left'
+                }`}>
+                  {message.timestamp.toLocaleTimeString('tr-TR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="max-w-[85%]">
                 <div className="flex items-center mb-1">
                   <div className="w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center mr-1">
                     <span className="text-white text-xs">🤖</span>
                   </div>
                   <span className="text-xs text-gray-500">AI Asistan</span>
                 </div>
-              )}
-              
-              <div
-                className={`p-2 rounded-lg text-xs ${
-                  message.type === 'user'
-                    ? 'bg-blue-600 text-white ml-auto'
-                    : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                <p className="leading-relaxed">{message.content}</p>
-              </div>
-              
-              <div className={`text-xs text-gray-500 mt-1 ${
-                message.type === 'user' ? 'text-right' : 'text-left'
-              }`}>
-                {message.timestamp.toLocaleTimeString('tr-TR', { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
-                })}
-              </div>
-            </div>
-          </div>
-        ))}
-        
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="max-w-[85%]">
-              <div className="flex items-center mb-1">
-                <div className="w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center mr-1">
-                  <span className="text-white text-xs">🤖</span>
-                </div>
-                <span className="text-xs text-gray-500">AI Asistan</span>
-              </div>
-              <div className="bg-gray-100 p-2 rounded-lg">
-                <div className="flex space-x-1">
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="bg-gray-100 p-2 rounded-lg">
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-        
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input */}
-      <div className="p-3 border-t border-gray-200">
-        <div className="flex items-end space-x-2">
-          <div className="flex-1 relative">
-            <textarea
-              ref={inputRef}
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Hangi ürünü arıyorsunuz? Örn: iPhone telefon, oyuncu setup, Nike ayakkabı..."
-              className="w-full resize-none border border-gray-300 rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-purple-500 focus:border-transparent max-h-20 text-xs"
-              rows="1"
-              style={{
-                height: 'auto',
-                minHeight: '32px'
-              }}
-              onInput={(e) => {
-                e.target.style.height = 'auto';
-                e.target.style.height = e.target.scrollHeight + 'px';
-              }}
-            />
-          </div>
+          )}
           
-          <button
-            onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isTyping}
-            className="bg-purple-600 text-white p-1.5 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-          >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input */}
+        <div className="p-3 border-t border-gray-200">
+          <div className="flex items-end space-x-2">
+            <div className="flex-1 relative">
+              <textarea
+                ref={inputRef}
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Hangi ürünü arıyorsunuz? Örn: iPhone telefon, oyuncu setup, Nike ayakkabı..."
+                className="w-full resize-none border border-gray-300 rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-purple-500 focus:border-transparent max-h-20 text-xs"
+                rows="1"
+                style={{
+                  height: 'auto',
+                  minHeight: '32px'
+                }}
+                onInput={(e) => {
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+              />
+            </div>
+            
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isTyping}
+              className="bg-purple-600 text-white p-1.5 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Search Timeline */}
+      <SearchTimeline 
+        isVisible={showTimeline}
+        searchQuery={inputMessage}
+        onComplete={() => {
+          setShowTimeline(false);
+        }}
+      />
+    </>
   );
 };
 
