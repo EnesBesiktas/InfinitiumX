@@ -1,6 +1,7 @@
 import ProductCard from './ProductCard';
+import BundleCard from './BundleCard';
 
-const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResults = [] }) => {
+const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResults = [], aiBundleResults = [] }) => {
   // Sample product data based on figma design
   const allProducts = [
     {
@@ -142,6 +143,11 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResu
 
   // Filtreleme fonksiyonu
   const filterProducts = () => {
+    // AI bundle sonuçları varsa onları göster
+    if (aiBundleResults.length > 0) {
+      return [];
+    }
+
     // AI arama sonuçları varsa onları göster
     if (aiSearchResults.length > 0) {
       return aiSearchResults;
@@ -171,6 +177,9 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResu
 
   // Başlık belirleme
   const getTitle = () => {
+    if (aiBundleResults.length > 0) {
+      return `AI Sepet Önerileri: "${searchQuery}"`;
+    }
     if (aiSearchResults.length > 0) {
       return `AI Arama Sonuçları: "${searchQuery}"`;
     }
@@ -185,6 +194,9 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResu
 
   // Açıklama belirleme
   const getDescription = () => {
+    if (aiBundleResults.length > 0) {
+      return `AI asistanı ${aiBundleResults.length} farklı sepet önerisi buldu`;
+    }
     if (aiSearchResults.length > 0) {
       return `AI asistanı ${products.length} ürün buldu`;
     }
@@ -205,28 +217,41 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResu
         <p className="text-gray-600">{getDescription()}</p>
       </div>
 
-      {/* Products Grid */}
-      {products.length > 0 ? (
+      {/* Bundle Results */}
+      {aiBundleResults.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {products.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              isAIRecommendation={aiSearchResults.length > 0}
+          {aiBundleResults.map((bundle) => (
+            <BundleCard 
+              key={bundle.id} 
+              bundle={bundle} 
+              isAIRecommendation={true}
             />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🔍</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Ürün bulunamadı</h3>
-          <p className="text-gray-600">
-            {searchQuery.trim() 
-              ? `"${searchQuery}" için ürün bulunamadı. Farklı anahtar kelimeler deneyebilirsiniz.`
-              : 'Bu kategoride ürün bulunamadı.'
-            }
-          </p>
-        </div>
+        /* Products Grid */
+        products.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {products.map((product) => (
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                isAIRecommendation={aiSearchResults.length > 0}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-gray-400 text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Ürün bulunamadı</h3>
+            <p className="text-gray-600">
+              {searchQuery.trim() 
+                ? `"${searchQuery}" için ürün bulunamadı. Farklı anahtar kelimeler deneyebilirsiniz.`
+                : 'Bu kategoride ürün bulunamadı.'
+              }
+            </p>
+          </div>
+        )
       )}
     </main>
   );

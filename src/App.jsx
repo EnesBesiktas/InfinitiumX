@@ -10,6 +10,7 @@ function App() {
   const [aiSearchQuery, setAiSearchQuery] = useState('');
   const [showAIChat, setShowAIChat] = useState(false);
   const [aiSearchResults, setAiSearchResults] = useState([]);
+  const [aiBundleResults, setAiBundleResults] = useState([]);
 
   const handleAISearch = (query) => {
     setAiSearchQuery(query);
@@ -23,9 +24,10 @@ function App() {
   };
 
   // AI Chat'ten gelen arama sonuçlarını işle
-  const handleAIChatSearch = (query, products) => {
+  const handleAIChatSearch = (query, products = [], bundles = []) => {
     setSearchQuery(query);
     setAiSearchResults(products);
+    setAiBundleResults(bundles);
   };
 
   const simulateAISearch = (query) => {
@@ -149,18 +151,21 @@ function App() {
   const handleCloseAIChat = () => {
     setShowAIChat(false);
     setAiSearchResults([]); // AI chat kapandığında sonuçları temizle
+    setAiBundleResults([]); // Bundle sonuçlarını da temizle
   };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
     setSelectedCategory('all'); // Arama yapıldığında kategori filtresini sıfırla
     setAiSearchResults([]); // Normal arama yapıldığında AI sonuçlarını temizle
+    setAiBundleResults([]); // Bundle sonuçlarını da temizle
   };
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     setSearchQuery(''); // Kategori seçildiğinde arama sorgusunu sıfırla
     setAiSearchResults([]); // Kategori seçildiğinde AI sonuçlarını temizle
+    setAiBundleResults([]); // Bundle sonuçlarını da temizle
   };
 
   return (
@@ -187,6 +192,7 @@ function App() {
             searchQuery={searchQuery}
             selectedCategory={selectedCategory}
             aiSearchResults={aiSearchResults}
+            aiBundleResults={aiBundleResults}
           />
         </div>
       </div>

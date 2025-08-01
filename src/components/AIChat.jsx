@@ -112,6 +112,186 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
       isDiscounted: false,
       image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop",
       tags: ["oyun", "playstation", "konsol", "hobi", "eğlence", "gaming"]
+    },
+    // Gaming Setup ürünleri
+    {
+      id: 7,
+      name: "Logitech G Pro X Gaming Klavye",
+      category: "Elektronik",
+      brand: "Logitech",
+      price: "2.499",
+      originalPrice: "2.999",
+      discount: 17,
+      rating: 4.8,
+      reviewCount: 456,
+      savings: "500",
+      isNew: false,
+      isDiscounted: true,
+      image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=400&fit=crop",
+      tags: ["klavye", "gaming", "logitech", "oyun", "rgb", "mekanik"]
+    },
+    {
+      id: 8,
+      name: "Razer DeathAdder V3 Pro Mouse",
+      category: "Elektronik",
+      brand: "Razer",
+      price: "1.899",
+      originalPrice: "2.299",
+      discount: 17,
+      rating: 4.7,
+      reviewCount: 234,
+      savings: "400",
+      isNew: false,
+      isDiscounted: true,
+      image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=400&fit=crop",
+      tags: ["mouse", "gaming", "razer", "oyun", "kablosuz", "hassas"]
+    },
+    {
+      id: 9,
+      name: "Blue Yeti USB Mikrofon",
+      category: "Elektronik",
+      brand: "Blue",
+      price: "1.299",
+      originalPrice: "1.599",
+      discount: 19,
+      rating: 4.6,
+      reviewCount: 189,
+      savings: "300",
+      isNew: false,
+      isDiscounted: true,
+      image: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&h=400&fit=crop",
+      tags: ["mikrofon", "blue", "usb", "streaming", "yayın", "ses"]
+    },
+    {
+      id: 10,
+      name: "Samsung Odyssey G7 27\" Gaming Monitör",
+      category: "Elektronik",
+      brand: "Samsung",
+      price: "8.999",
+      originalPrice: "10.999",
+      discount: 18,
+      rating: 4.8,
+      reviewCount: 567,
+      savings: "2.000",
+      isNew: false,
+      isDiscounted: true,
+      image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=400&fit=crop",
+      tags: ["monitör", "gaming", "samsung", "240hz", "curved", "oyun"]
+    },
+    {
+      id: 11,
+      name: "Intel Core i7-13700K İşlemci",
+      category: "Elektronik",
+      brand: "Intel",
+      price: "12.999",
+      originalPrice: "14.999",
+      discount: 13,
+      rating: 4.9,
+      reviewCount: 345,
+      savings: "2.000",
+      isNew: false,
+      isDiscounted: true,
+      image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=400&fit=crop",
+      tags: ["işlemci", "intel", "core", "i7", "gaming", "performans"]
+    },
+    {
+      id: 12,
+      name: "NVIDIA RTX 4070 Ti Ekran Kartı",
+      category: "Elektronik",
+      brand: "NVIDIA",
+      price: "24.999",
+      originalPrice: "28.999",
+      discount: 14,
+      rating: 4.8,
+      reviewCount: 234,
+      savings: "4.000",
+      isNew: false,
+      isDiscounted: true,
+      image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=400&fit=crop",
+      tags: ["ekran kartı", "nvidia", "rtx", "4070", "gaming", "ray tracing"]
+    }
+  ];
+
+  // Bundle veritabanı
+  const bundleDatabase = [
+    {
+      id: 1,
+      name: "Gaming Setup - Fiyat Performans",
+      category: "Gaming Setup",
+      description: "Bütçe dostu oyuncu setup'ı",
+      bundleType: "Fiyat Performans",
+      products: [
+        productDatabase.find(p => p.name.includes("Logitech G Pro X")),
+        productDatabase.find(p => p.name.includes("Razer DeathAdder")),
+        productDatabase.find(p => p.name.includes("Blue Yeti")),
+        productDatabase.find(p => p.name.includes("Samsung Odyssey")),
+        productDatabase.find(p => p.name.includes("Intel Core i7")),
+        productDatabase.find(p => p.name.includes("RTX 4070"))
+      ].filter(Boolean),
+      totalPrice: "51.644",
+      originalPrice: "61.844",
+      discount: 16,
+      savings: "10.200",
+      features: [
+        "💰 Bütçe dostu fiyat performans oranı",
+        "🎮 Tüm modern oyunlar için yeterli performans",
+        "🔧 Kolay kurulum ve uyumluluk",
+        "⭐ Müşteri memnuniyeti garantili ürünler"
+      ],
+      isNew: true,
+      isDiscounted: true
+    },
+    {
+      id: 2,
+      name: "Gaming Setup - Premium",
+      category: "Gaming Setup",
+      description: "En yüksek performanslı oyuncu setup'ı",
+      bundleType: "Premium",
+      products: [
+        productDatabase.find(p => p.name.includes("Logitech G Pro X")),
+        productDatabase.find(p => p.name.includes("Razer DeathAdder")),
+        productDatabase.find(p => p.name.includes("Blue Yeti")),
+        productDatabase.find(p => p.name.includes("Samsung Odyssey")),
+        productDatabase.find(p => p.name.includes("Intel Core i7")),
+        productDatabase.find(p => p.name.includes("RTX 4070"))
+      ].filter(Boolean),
+      totalPrice: "51.644",
+      originalPrice: "61.844",
+      discount: 16,
+      savings: "10.200",
+      features: [
+        "🚀 Maksimum oyun performansı",
+        "🎯 4K 240fps oyun deneyimi",
+        "🎧 Profesyonel ses kalitesi",
+        "💎 Premium malzeme kalitesi"
+      ],
+      isNew: true,
+      isDiscounted: true
+    },
+    {
+      id: 3,
+      name: "Gaming Setup - Başlangıç",
+      category: "Gaming Setup",
+      description: "Yeni başlayan oyuncular için ideal",
+      bundleType: "Başlangıç",
+      products: [
+        productDatabase.find(p => p.name.includes("Logitech G Pro X")),
+        productDatabase.find(p => p.name.includes("Razer DeathAdder")),
+        productDatabase.find(p => p.name.includes("Blue Yeti")),
+        productDatabase.find(p => p.name.includes("Samsung Odyssey"))
+      ].filter(Boolean),
+      totalPrice: "14.696",
+      originalPrice: "17.896",
+      discount: 18,
+      savings: "3.200",
+      features: [
+        "🎮 Temel oyun ihtiyaçları için yeterli",
+        "💰 Uygun fiyat aralığı",
+        "📈 İleride yükseltme imkanı",
+        "🎯 Kolay kullanım ve kurulum"
+      ],
+      isNew: false,
+      isDiscounted: true
     }
   ];
 
@@ -148,24 +328,50 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
     });
   };
 
+  // Bundle arama fonksiyonu
+  const searchBundles = (query) => {
+    const searchTerms = query.toLowerCase().split(' ');
+    
+    return bundleDatabase.filter(bundle => {
+      const bundleText = `${bundle.name} ${bundle.category} ${bundle.description} ${bundle.bundleType}`.toLowerCase();
+      return searchTerms.some(term => bundleText.includes(term));
+    });
+  };
+
   // AI yanıt üretme fonksiyonu
   const generateAIResponse = (userQuery) => {
     const foundProducts = searchProducts(userQuery);
+    const foundBundles = searchBundles(userQuery);
     
-    if (foundProducts.length === 0) {
+    // Çoğul arama terimleri kontrol et
+    const pluralTerms = ['setup', 'oyuncu', 'gaming', 'bilgisayar', 'sistem', 'kombin', 'set'];
+    const isPluralSearch = pluralTerms.some(term => userQuery.toLowerCase().includes(term));
+    
+    if (foundBundles.length > 0 && isPluralSearch) {
+      // Bundle önerisi
+      const bundleNames = foundBundles.map(b => b.name).join(', ');
       return {
-        message: `"${userQuery}" için ürün bulamadım. Daha spesifik bir arama yapabilir misiniz? Örneğin: "iPhone telefon", "Nike ayakkabı", "MacBook laptop" gibi.`,
-        products: []
+        message: `"${userQuery}" için ${foundBundles.length} farklı sepet önerisi buldum: ${bundleNames}`,
+        products: [],
+        bundles: foundBundles
+      };
+    } else if (foundProducts.length === 0) {
+      return {
+        message: `"${userQuery}" için ürün bulamadım. Daha spesifik bir arama yapabilir misiniz? Örneğin: "iPhone telefon", "Nike ayakkabı", "oyuncu setup" gibi.`,
+        products: [],
+        bundles: []
+      };
+    } else {
+      // Tekil ürün önerisi
+      const topProducts = foundProducts.slice(0, 3);
+      const productNames = topProducts.map(p => p.name).join(', ');
+      
+      return {
+        message: `"${userQuery}" için ${foundProducts.length} ürün buldum. İşte en uygun ${topProducts.length} tanesi: ${productNames}`,
+        products: foundProducts,
+        bundles: []
       };
     }
-    
-    const topProducts = foundProducts.slice(0, 3);
-    const productNames = topProducts.map(p => p.name).join(', ');
-    
-    return {
-      message: `"${userQuery}" için ${foundProducts.length} ürün buldum. İşte en uygun ${topProducts.length} tanesi: ${productNames}`,
-      products: foundProducts // Tüm bulunan ürünleri döndür
-    };
   };
 
   const handleSendMessage = async () => {
@@ -199,6 +405,8 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
       // AI arama sonuçlarını ana sayfaya aktar
       if (aiResponse.products.length > 0) {
         onAISearch(inputMessage, aiResponse.products);
+      } else if (aiResponse.bundles.length > 0) {
+        onAISearch(inputMessage, [], aiResponse.bundles);
       }
     }, 1500);
   };
@@ -307,7 +515,7 @@ const AIChat = ({ isVisible, onClose, onAISearch }) => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Hangi ürünü arıyorsunuz? Örn: iPhone telefon, Nike ayakkabı..."
+              placeholder="Hangi ürünü arıyorsunuz? Örn: iPhone telefon, oyuncu setup, Nike ayakkabı..."
               className="w-full resize-none border border-gray-300 rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-purple-500 focus:border-transparent max-h-20 text-xs"
               rows="1"
               style={{
