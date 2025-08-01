@@ -8,8 +8,8 @@ const Header = ({ onAISearchClick, onSearch }) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       if (isAIActive) {
-        // AI arama aktifse AI modal'ını aç
-        onAISearchClick();
+        // AI arama aktifse AI arama fonksiyonunu çağır
+        onAISearchClick(searchQuery);
       } else {
         // Normal arama
         onSearch(searchQuery);

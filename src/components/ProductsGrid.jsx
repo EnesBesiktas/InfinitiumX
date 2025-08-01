@@ -1,6 +1,6 @@
 import ProductCard from './ProductCard';
 
-const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
+const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResults = [] }) => {
   // Sample product data based on figma design
   const allProducts = [
     {
@@ -142,6 +142,11 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
 
   // Filtreleme fonksiyonu
   const filterProducts = () => {
+    // AI arama sonuçları varsa onları göster
+    if (aiSearchResults.length > 0) {
+      return aiSearchResults;
+    }
+
     let filtered = allProducts;
 
     // Kategori filtreleme
@@ -166,6 +171,9 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
 
   // Başlık belirleme
   const getTitle = () => {
+    if (aiSearchResults.length > 0) {
+      return `AI Arama Sonuçları: "${searchQuery}"`;
+    }
     if (searchQuery.trim()) {
       return `"${searchQuery}" için arama sonuçları`;
     }
@@ -175,19 +183,37 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
     return 'Tüm Ürünler';
   };
 
+  // Açıklama belirleme
+  const getDescription = () => {
+    if (aiSearchResults.length > 0) {
+      return `AI asistanı ${products.length} ürün buldu`;
+    }
+    if (searchQuery.trim()) {
+      return `${products.length} ürün bulundu`;
+    }
+    if (selectedCategory !== 'all') {
+      return `${products.length} ürün bulundu`;
+    }
+    return `${products.length} ürün bulundu`;
+  };
+
   return (
     <main className="p-6">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{getTitle()}</h2>
-        <p className="text-gray-600">{products.length} ürün bulundu</p>
+        <p className="text-gray-600">{getDescription()}</p>
       </div>
 
       {/* Products Grid */}
       {products.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              isAIRecommendation={aiSearchResults.length > 0}
+            />
           ))}
         </div>
       ) : (
