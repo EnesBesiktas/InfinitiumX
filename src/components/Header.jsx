@@ -15,10 +15,13 @@ const Header = ({
   getCartTotal,
   getCartItemCount,
   favorites,
-  toggleFavorite
+  toggleFavorite,
+  addToCart,
+  clearAllFavorites
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAIActive, setIsAIActive] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
   const headerRef = useRef(null);
 
   const handleSearch = (e) => {
@@ -57,6 +60,15 @@ const Header = ({
     // Diğer panelleri kapat
     setShowNotifications(false);
     setShowMessages(false);
+    setShowFavorites(false);
+  };
+
+  const handleFavoritesClick = () => {
+    setShowFavorites(!showFavorites);
+    // Diğer panelleri kapat
+    setShowNotifications(false);
+    setShowMessages(false);
+    setShowCart(false);
   };
 
   // Click outside handler
@@ -66,6 +78,7 @@ const Header = ({
         setShowNotifications(false);
         setShowMessages(false);
         setShowCart(false);
+        setShowFavorites(false);
       }
     };
 
@@ -73,7 +86,7 @@ const Header = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [setShowNotifications, setShowMessages, setShowCart]);
+  }, [setShowNotifications, setShowMessages, setShowCart, setShowFavorites]);
 
   return (
     <header ref={headerRef} className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -135,7 +148,8 @@ const Header = ({
             <div className="flex items-center space-x-4">
               {/* Favorites */}
               <button 
-                className="p-2 text-gray-600 hover:text-red-500 transition-colors relative"
+                onClick={handleFavoritesClick}
+                className={`p-2 transition-colors relative ${showFavorites ? 'text-red-500' : 'text-gray-600 hover:text-red-500'}`}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -352,10 +366,75 @@ const Header = ({
                </button>
              </div>
            )}
-         </div>
-       )}
-    </header>
-  );
-};
+                   </div>
+        )}
+
+      {/* Favorites Panel */}
+      {showFavorites && (
+        <div className="absolute top-16 right-0 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Favorilerim ({favorites.length})</h3>
+          </div>
+          <div className="max-h-96 overflow-y-auto">
+            {favorites.length === 0 ? (
+              <div className="p-8 text-center">
+                <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <p className="text-gray-500">Favori listeniz boş</p>
+                <p className="text-sm text-gray-400 mt-1">Beğendiğiniz ürünleri favorilere ekleyin</p>
+              </div>
+            ) : (
+              favorites.map((item) => (
+                <div key={item.id} className="p-4 border-b border-gray-100">
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                      <p className="text-xs text-gray-500">{item.brand}</p>
+                      <p className="text-sm font-semibold text-purple-600">{item.price} ₺</p>
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <button 
+                        onClick={() => toggleFavorite(item)}
+                        className="text-red-500 hover:text-red-600 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      </button>
+                      <button 
+                        onClick={() => addToCart && addToCart(item)}
+                        className="text-purple-600 hover:text-purple-700 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 11-4 0v-6m4 0V9a2 2 0 10-4 0v4" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+                      {favorites.length > 0 && (
+              <div className="p-4 border-t border-gray-200">
+                <button 
+                  onClick={clearAllFavorites}
+                  className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors font-medium"
+                >
+                  Favorileri Temizle
+                </button>
+              </div>
+            )}
+        </div>
+      )}
+     </header>
+   );
+ };
 
 export default Header; 

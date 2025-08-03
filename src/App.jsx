@@ -249,6 +249,11 @@ function App() {
     return favorites.some(fav => fav.id === productId);
   };
 
+  // Tüm favorileri temizleme fonksiyonu
+  const clearAllFavorites = () => {
+    setFavorites([]);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -267,6 +272,8 @@ function App() {
         getCartItemCount={getCartItemCount}
         favorites={favorites}
         toggleFavorite={toggleFavorite}
+        addToCart={addToCart}
+        clearAllFavorites={clearAllFavorites}
       />
       
       <div className="flex">
