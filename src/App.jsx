@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ProductsGrid from './components/ProductsGrid';
 import AIChat from './components/AIChat';
+import ProductDetail from './components/ProductDetail';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +23,9 @@ function App() {
   
   // Favori yönetimi için state'ler
   const [favorites, setFavorites] = useState([]);
+  
+  // Ürün detay sayfası için state'ler
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleAISearch = (query) => {
     setAiSearchQuery(query);
@@ -254,6 +258,16 @@ function App() {
     setFavorites([]);
   };
 
+  // Ürün detay sayfasını açma fonksiyonu
+  const openProductDetail = (product) => {
+    setSelectedProduct(product);
+  };
+
+  // Ürün detay sayfasını kapatma fonksiyonu
+  const closeProductDetail = () => {
+    setSelectedProduct(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -289,17 +303,29 @@ function App() {
             onAISearch={handleAIChatSearch}
           />
           
-          <ProductsGrid 
-            searchQuery={searchQuery}
-            selectedCategory={selectedCategory}
-            aiSearchResults={aiSearchResults}
-            aiBundleResults={aiBundleResults}
-            addToCart={addToCart}
-            toggleFavorite={toggleFavorite}
-            isFavorite={isFavorite}
-          />
+                  <ProductsGrid 
+          searchQuery={searchQuery}
+          selectedCategory={selectedCategory}
+          aiSearchResults={aiSearchResults}
+          aiBundleResults={aiBundleResults}
+          addToCart={addToCart}
+          toggleFavorite={toggleFavorite}
+          isFavorite={isFavorite}
+          openProductDetail={openProductDetail}
+        />
         </div>
       </div>
+      
+      {/* Ürün Detay Sayfası */}
+      {selectedProduct && (
+        <ProductDetail
+          product={selectedProduct}
+          onClose={closeProductDetail}
+          addToCart={addToCart}
+          toggleFavorite={toggleFavorite}
+          isFavorite={isFavorite}
+        />
+      )}
     </div>
   );
 }

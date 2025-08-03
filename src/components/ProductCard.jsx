@@ -1,4 +1,4 @@
-const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFavorite, isFavorite }) => {
+const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFavorite, isFavorite, openProductDetail }) => {
   const { 
     id, 
     name, 
@@ -94,7 +94,10 @@ const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFav
 
       {/* Heart Icon */}
       <button 
-        onClick={() => toggleFavorite(product)}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFavorite(product);
+        }}
         className={`absolute top-2 right-2 z-10 p-1.5 rounded-full shadow-md transition-colors ${
           isFavorite(id) 
             ? 'bg-red-500 hover:bg-red-600' 
@@ -116,7 +119,10 @@ const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFav
       </button>
 
       {/* Product Image */}
-      <div className="aspect-square overflow-hidden bg-gray-100">
+      <div 
+        className="aspect-square overflow-hidden bg-gray-100 cursor-pointer"
+        onClick={() => openProductDetail && openProductDetail(product)}
+      >
         <img 
           src={image || "/api/placeholder/300/300"} 
           alt={name}
@@ -126,7 +132,10 @@ const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFav
 
       {/* Product Info */}
       <div className="p-3">
-        <h3 className="font-semibold text-gray-900 text-base mb-1 line-clamp-2">
+        <h3 
+          className="font-semibold text-gray-900 text-base mb-1 line-clamp-2 cursor-pointer hover:text-purple-600 transition-colors"
+          onClick={() => openProductDetail && openProductDetail(product)}
+        >
           {name}
         </h3>
         
@@ -178,7 +187,10 @@ const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFav
 
         {/* Add to Cart Button */}
         <button 
-          onClick={() => addToCart(product)}
+          onClick={(e) => {
+            e.stopPropagation();
+            addToCart(product);
+          }}
           className="w-full bg-black text-white py-2 px-3 rounded font-medium hover:bg-gray-800 transition-colors flex items-center justify-center text-sm"
         >
           Sepete Ekle

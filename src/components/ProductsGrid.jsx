@@ -1,7 +1,7 @@
 import ProductCard from './ProductCard';
 import BundleCard from './BundleCard';
 
-const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResults = [], aiBundleResults = [], addToCart, toggleFavorite, isFavorite }) => {
+const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResults = [], aiBundleResults = [], addToCart, toggleFavorite, isFavorite, openProductDetail }) => {
   // Sample product data based on figma design
   const allProducts = [
     {
@@ -233,14 +233,15 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResu
         products.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {products.map((product) => (
-                             <ProductCard 
-                 key={product.id} 
-                 product={product} 
-                 isAIRecommendation={aiSearchResults.length > 0}
-                 addToCart={addToCart}
-                 toggleFavorite={toggleFavorite}
-                 isFavorite={isFavorite}
-               />
+                                             <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  isAIRecommendation={aiSearchResults.length > 0}
+                  addToCart={addToCart}
+                  toggleFavorite={toggleFavorite}
+                  isFavorite={isFavorite}
+                  openProductDetail={openProductDetail}
+                />
             ))}
           </div>
         ) : (
