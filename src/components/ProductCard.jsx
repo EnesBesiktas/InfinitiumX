@@ -1,4 +1,4 @@
-const ProductCard = ({ product, isAIRecommendation = false }) => {
+const ProductCard = ({ product, isAIRecommendation = false, addToCart, toggleFavorite, isFavorite }) => {
   const { 
     id, 
     name, 
@@ -93,8 +93,24 @@ const ProductCard = ({ product, isAIRecommendation = false }) => {
       </div>
 
       {/* Heart Icon */}
-      <button className="absolute top-2 right-2 z-10 p-1.5 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
-        <svg className="w-4 h-4 text-gray-600 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button 
+        onClick={() => toggleFavorite(product)}
+        className={`absolute top-2 right-2 z-10 p-1.5 rounded-full shadow-md transition-colors ${
+          isFavorite(id) 
+            ? 'bg-red-500 hover:bg-red-600' 
+            : 'bg-white hover:bg-gray-50'
+        }`}
+      >
+        <svg 
+          className={`w-4 h-4 transition-colors ${
+            isFavorite(id) 
+              ? 'text-white' 
+              : 'text-gray-600 hover:text-red-500'
+          }`} 
+          fill={isFavorite(id) ? 'currentColor' : 'none'} 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </button>
@@ -161,7 +177,10 @@ const ProductCard = ({ product, isAIRecommendation = false }) => {
         )}
 
         {/* Add to Cart Button */}
-        <button className="w-full bg-black text-white py-2 px-3 rounded font-medium hover:bg-gray-800 transition-colors flex items-center justify-center text-sm">
+        <button 
+          onClick={() => addToCart(product)}
+          className="w-full bg-black text-white py-2 px-3 rounded font-medium hover:bg-gray-800 transition-colors flex items-center justify-center text-sm"
+        >
           Sepete Ekle
         </button>
       </div>

@@ -11,6 +11,17 @@ function App() {
   const [showAIChat, setShowAIChat] = useState(false);
   const [aiSearchResults, setAiSearchResults] = useState([]);
   const [aiBundleResults, setAiBundleResults] = useState([]);
+  
+  // Header butonları için state'ler
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  
+  // Sepet yönetimi için state'ler
+  const [cartItems, setCartItems] = useState([]);
+  
+  // Favori yönetimi için state'ler
+  const [favorites, setFavorites] = useState([]);
 
   const handleAISearch = (query) => {
     setAiSearchQuery(query);
@@ -168,11 +179,94 @@ function App() {
     setAiBundleResults([]); // Bundle sonuçlarını da temizle
   };
 
+  // Sepete ürün ekleme fonksiyonu
+  const addToCart = (product) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(item => item.id === product.id);
+      if (existingItem) {
+        // Ürün zaten sepette varsa miktarını artır
+        return prevItems.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        // Yeni ürün ekle
+        return [...prevItems, { ...product, quantity: 1 }];
+      }
+    });
+  };
+
+  // Sepetten ürün silme fonksiyonu
+  const removeFromCart = (productId) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+  };
+
+  // Sepetteki ürün miktarını güncelleme fonksiyonu
+  const updateCartItemQuantity = (productId, quantity) => {
+    if (quantity <= 0) {
+      removeFromCart(productId);
+    } else {
+      setCartItems(prevItems =>
+        prevItems.map(item =>
+          item.id === productId
+            ? { ...item, quantity }
+            : item
+        )
+      );
+    }
+  };
+
+  // Sepet toplam tutarını hesaplama
+  const getCartTotal = () => {
+    return cartItems.reduce((total, item) => {
+      const price = parseFloat(item.price.replace(/\./g, ''));
+      return total + (price * item.quantity);
+    }, 0);
+  };
+
+  // Sepetteki toplam ürün sayısı
+  const getCartItemCount = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  // Favori ekleme/çıkarma fonksiyonu
+  const toggleFavorite = (product) => {
+    setFavorites(prevFavorites => {
+      const isFavorite = prevFavorites.some(fav => fav.id === product.id);
+      if (isFavorite) {
+        // Favorilerden çıkar
+        return prevFavorites.filter(fav => fav.id !== product.id);
+      } else {
+        // Favorilere ekle
+        return [...prevFavorites, product];
+      }
+    });
+  };
+
+  // Ürünün favori olup olmadığını kontrol etme
+  const isFavorite = (productId) => {
+    return favorites.some(fav => fav.id === productId);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
         onAISearchClick={handleAISearch} 
         onSearch={handleSearch}
+        showNotifications={showNotifications}
+        setShowNotifications={setShowNotifications}
+        showMessages={showMessages}
+        setShowMessages={setShowMessages}
+        showCart={showCart}
+        setShowCart={setShowCart}
+        cartItems={cartItems}
+        removeFromCart={removeFromCart}
+        updateCartItemQuantity={updateCartItemQuantity}
+        getCartTotal={getCartTotal}
+        getCartItemCount={getCartItemCount}
+        favorites={favorites}
+        toggleFavorite={toggleFavorite}
       />
       
       <div className="flex">
@@ -193,6 +287,9 @@ function App() {
             selectedCategory={selectedCategory}
             aiSearchResults={aiSearchResults}
             aiBundleResults={aiBundleResults}
+            addToCart={addToCart}
+            toggleFavorite={toggleFavorite}
+            isFavorite={isFavorite}
           />
         </div>
       </div>
