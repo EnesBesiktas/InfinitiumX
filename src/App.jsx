@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ProductsGrid from './components/ProductsGrid';
 import AIChat from './components/AIChat';
 import ProductDetail from './components/ProductDetail';
+import { auth, googleProvider } from './firebase';
+import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [idToken, setIdToken] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [aiSearchQuery, setAiSearchQuery] = useState('');
@@ -26,6 +33,36 @@ function App() {
   
   // Ürün detay sayfası için state'ler
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        const token = await currentUser.getIdToken();
+        setIdToken(token);
+        console.log("Firebase ID Token:", token); // For debugging
+      } else {
+        setIdToken(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Error signing in with Google: ", error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   const handleAISearch = (query) => {
     setAiSearchQuery(query);
@@ -268,9 +305,12 @@ function App() {
     setSelectedProduct(null);
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
+    const MainApp = () => (
+    <>
       <Header 
+        user={user}
+        onSignIn={handleSignIn}
+        onSignOut={handleSignOut}
         onAISearchClick={handleAISearch} 
         onSearch={handleSearch}
         showNotifications={showNotifications}
@@ -289,34 +329,29 @@ function App() {
         addToCart={addToCart}
         clearAllFavorites={clearAllFavorites}
       />
-      
       <div className="flex">
         <Sidebar 
           selectedCategory={selectedCategory}
           onCategorySelect={handleCategorySelect}
         />
         <div className="flex-1">
-          {/* AI Chat alanı - sadece AI arama yapıldığında göster */}
           <AIChat 
             isVisible={showAIChat} 
             onClose={handleCloseAIChat}
             onAISearch={handleAIChatSearch}
           />
-          
-                  <ProductsGrid 
-          searchQuery={searchQuery}
-          selectedCategory={selectedCategory}
-          aiSearchResults={aiSearchResults}
-          aiBundleResults={aiBundleResults}
-          addToCart={addToCart}
-          toggleFavorite={toggleFavorite}
-          isFavorite={isFavorite}
-          openProductDetail={openProductDetail}
-        />
+          <ProductsGrid 
+            searchQuery={searchQuery}
+            selectedCategory={selectedCategory}
+            aiSearchResults={aiSearchResults}
+            aiBundleResults={aiBundleResults}
+            addToCart={addToCart}
+            toggleFavorite={toggleFavorite}
+            isFavorite={isFavorite}
+            openProductDetail={openProductDetail}
+          />
         </div>
       </div>
-      
-      {/* Ürün Detay Sayfası */}
       {selectedProduct && (
         <ProductDetail
           product={selectedProduct}
@@ -326,6 +361,19 @@ function App() {
           isFavorite={isFavorite}
         />
       )}
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Routes>
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
+        <Route 
+          path="/*" 
+          element={user ? <MainApp /> : <Navigate to="/login" />}
+        />
+      </Routes>
     </div>
   );
 }
