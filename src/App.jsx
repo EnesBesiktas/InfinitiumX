@@ -62,9 +62,16 @@ function App() {
     setIsTimelineVisible(true);
   };
 
-  const handleTimelineComplete = () => {
+  const handleTimelineComplete = (searchResults) => {
     setIsTimelineVisible(false);
-    handleAISearch(aiSearchQuery);
+    
+    // Process the search results from the timeline
+    if (searchResults) {
+      setSearchQuery(searchResults.query || aiSearchQuery);
+      setAiSearchResults(searchResults.products || []);
+      setAiBundleResults(searchResults.packages || searchResults.bundles || []);
+      setSelectedCategory('all');
+    }
   };
 
   const handleCancelSearch = () => {
@@ -73,7 +80,8 @@ function App() {
 
   const handleAdditionalQuery = (query) => {
     console.log('Additional Query:', query);
-    // Here you can add logic to send the additional query to your backend
+    // Additional queries are now handled within the SearchTimeline component
+    // This function can be used for logging or additional processing if needed
   };
 
   const handlePromptSubmit = (e) => {
@@ -402,9 +410,9 @@ function App() {
       <Routes>
         <Route path="/login" element={!user ? <Login onSignIn={handleSignIn} /> : <Navigate to="/" />} />
         <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
-        <Route 
-          path="/*" 
-          element={user ? <MainApp /> : <Navigate to="/login" />}
+        <Route
+          path="/*"
+          element={<MainApp />}
         />
       </Routes>
     </div>

@@ -12,10 +12,35 @@ export const searchWithAI = async (query) => {
     const response = await apiClient.post('/api/v1/packages', {
       query: query,
     });
-    return response.data;
+    
+    // Ensure consistent response structure
+    const data = response.data;
+    return {
+      products: data.products || [],
+      packages: data.packages || [],
+      bundles: data.bundles || [],
+      query: query,
+      total_count: data.total_count || 0,
+      metadata: data.metadata || {},
+      ...data // Include any additional fields from the API
+    };
   } catch (error) {
     console.error('Error during AI search:', error);
-    throw error;
+    
+    // Enhanced error handling
+    if (error.response) {
+      // Server responded with error status
+      const errorMessage = error.response.data?.message || 
+                          error.response.data?.error || 
+                          `Server error: ${error.response.status}`;
+      throw new Error(errorMessage);
+    } else if (error.request) {
+      // Request was made but no response received
+      throw new Error('Sunucuya bağlanılamıyor. İnternet bağlantınızı kontrol edin.');
+    } else {
+      // Something else happened
+      throw new Error('Beklenmeyen bir hata oluştu.');
+    }
   }
 };
 

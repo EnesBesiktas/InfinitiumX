@@ -34,13 +34,8 @@ const Header = ({
     if (!searchQuery.trim()) return;
 
     if (isAIActive) {
-      try {
-        const results = await searchWithAI(searchQuery);
-        onSearchResults(results); // Pass AI search results to parent
-      } catch (error) {
-        console.error('AI search failed:', error);
-        // Optionally, display an error to the user
-      }
+      // Trigger timeline for AI search
+      onAISearchClick(searchQuery);
     } else {
       onSearch(searchQuery, false); // Existing logic for regular search
     }
@@ -205,7 +200,7 @@ const Header = ({
                           'Arkadaşımla akşam yemeğine çıkacağım beyaz tonda elbiseler öner',
                           'Düğünde neler giyebilirim?',
                           'Yeni gelenler ve beğenilenleri göster',
-                          'En çok satanlarda yorumları iyi olanlar'
+                          'Youtube kanalım için bana starter kit öner'
                         ].map((suggestion, index) => (
                           <button
                             key={index}
