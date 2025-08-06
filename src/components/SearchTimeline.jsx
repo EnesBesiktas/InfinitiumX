@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 
-const SearchTimeline = ({ isVisible, searchQuery, onComplete }) => {
+const SearchTimeline = ({ isVisible, searchQuery, onComplete, onCancel, onAdditionalQuery }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [additionalQuery, setAdditionalQuery] = useState('');
 
   const steps = [
     {
@@ -10,35 +11,35 @@ const SearchTimeline = ({ isVisible, searchQuery, onComplete }) => {
       title: "Arama başlatılıyor...",
       description: "AI asistanınız sorgunuzu analiz ediyor",
       icon: "🔍",
-      duration: 1000
+      duration: 10000
     },
     {
       id: 2,
       title: "Veritabanı taranıyor",
       description: "Milyonlarca ürün arasından en uygunları bulunuyor",
       icon: "📊",
-      duration: 1500
+      duration: 12000
     },
     {
       id: 3,
       title: "AI analizi yapılıyor",
       description: "Yapay zeka ürünleri değerlendiriyor ve sıralıyor",
       icon: "🤖",
-      duration: 2000
+      duration: 13000
     },
     {
       id: 4,
       title: "Sonuçlar hazırlanıyor",
       description: "En iyi öneriler sizin için derleniyor",
       icon: "✨",
-      duration: 1000
+      duration: 15000
     },
     {
       id: 5,
       title: "Arama tamamlandı!",
-      description: `"${searchQuery}" için sonuçlar hazır`,
+      description: `Sonuçlar hazır`,
       icon: "✅",
-      duration: 500
+      duration: 5000
     }
   ];
 
@@ -78,17 +79,10 @@ const SearchTimeline = ({ isVisible, searchQuery, onComplete }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🤖</span>
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">AI Arama Yapılıyor</h3>
-          <p className="text-gray-600">"{searchQuery}" için en iyi sonuçları buluyoruz</p>
-        </div>
+
 
         {/* Timeline */}
-        <div className="space-y-4">
+        <div className="space-y-4 mb-8">
           {steps.map((step, index) => (
             <div key={step.id} className="flex items-start space-x-4">
               {/* Timeline Line */}
@@ -131,6 +125,39 @@ const SearchTimeline = ({ isVisible, searchQuery, onComplete }) => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Cancel Button */}
+        {/* Additional Query Input */}
+        <div className="mt-8">
+          <label htmlFor="additional-query" className="block text-sm font-medium text-gray-700 mb-2">Ek İstek Ekle</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              id="additional-query"
+              value={additionalQuery}
+              onChange={(e) => setAdditionalQuery(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              placeholder="Örn: daha ucuz seçenekler..."
+            />
+            <button
+              onClick={() => onAdditionalQuery(additionalQuery)}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:bg-purple-300"
+              disabled={!additionalQuery.trim()}
+            >
+              Gönder
+            </button>
+          </div>
+        </div>
+
+        {/* Cancel Button */}
+        <div className="text-center mt-4">
+          <button 
+            onClick={onCancel}
+            className="text-gray-500 hover:text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+          >
+            Aramayı İptal Et
+          </button>
         </div>
 
         {/* Loading Animation */}

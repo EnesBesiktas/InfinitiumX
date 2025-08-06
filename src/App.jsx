@@ -3,8 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ProductsGrid from './components/ProductsGrid';
-import AIChat from './components/AIChat';
 import ProductDetail from './components/ProductDetail';
+import SearchTimeline from './components/SearchTimeline';
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import Login from './pages/Login.jsx';
@@ -16,9 +16,10 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [aiSearchQuery, setAiSearchQuery] = useState('');
-  const [showAIChat, setShowAIChat] = useState(false);
+  const [additionalPrompt, setAdditionalPrompt] = useState('');
   const [aiSearchResults, setAiSearchResults] = useState([]);
   const [aiBundleResults, setAiBundleResults] = useState([]);
+  const [isTimelineVisible, setIsTimelineVisible] = useState(false);
   
   // Header butonları için state'ler
   const [showNotifications, setShowNotifications] = useState(false);
@@ -56,6 +57,34 @@ function App() {
     }
   };
 
+    const handleAISearchClick = (query) => {
+    setAiSearchQuery(query);
+    setIsTimelineVisible(true);
+  };
+
+  const handleTimelineComplete = () => {
+    setIsTimelineVisible(false);
+    handleAISearch(aiSearchQuery);
+  };
+
+  const handleCancelSearch = () => {
+    setIsTimelineVisible(false);
+  };
+
+  const handleAdditionalQuery = (query) => {
+    console.log('Additional Query:', query);
+    // Here you can add logic to send the additional query to your backend
+  };
+
+  const handlePromptSubmit = (e) => {
+    e.preventDefault();
+    if (additionalPrompt.trim()) {
+      console.log('Additional Prompt:', additionalPrompt);
+      // Here you can add logic to process the additional prompt
+      setAdditionalPrompt('');
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -68,7 +97,6 @@ function App() {
     setAiSearchQuery(query);
     setSearchQuery(query); // AI arama sorgusunu normal arama sorgusuna da set et
     setSelectedCategory('all'); // Kategori filtresini sıfırla
-    setShowAIChat(true); // AI chat alanını göster
     
     // AI arama sonuçlarını simüle et
     const aiResults = simulateAISearch(query);
@@ -311,7 +339,7 @@ function App() {
         user={user}
         onSignIn={handleSignIn}
         onSignOut={handleSignOut}
-        onAISearchClick={handleAISearch} 
+        onAISearchClick={handleAISearchClick}
         onSearch={handleSearch}
         showNotifications={showNotifications}
         setShowNotifications={setShowNotifications}
@@ -328,6 +356,9 @@ function App() {
         toggleFavorite={toggleFavorite}
         addToCart={addToCart}
         clearAllFavorites={clearAllFavorites}
+        additionalPrompt={additionalPrompt}
+        setAdditionalPrompt={setAdditionalPrompt}
+        onPromptSubmit={handlePromptSubmit}
       />
       <div className="flex">
         <Sidebar 
@@ -335,11 +366,6 @@ function App() {
           onCategorySelect={handleCategorySelect}
         />
         <div className="flex-1">
-          <AIChat 
-            isVisible={showAIChat} 
-            onClose={handleCloseAIChat}
-            onAISearch={handleAIChatSearch}
-          />
           <ProductsGrid 
             searchQuery={searchQuery}
             selectedCategory={selectedCategory}
@@ -366,8 +392,15 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SearchTimeline 
+        isVisible={isTimelineVisible} 
+        searchQuery={aiSearchQuery} 
+        onComplete={handleTimelineComplete} 
+        onCancel={handleCancelSearch} 
+        onAdditionalQuery={handleAdditionalQuery} 
+      />
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route path="/login" element={!user ? <Login onSignIn={handleSignIn} /> : <Navigate to="/" />} />
         <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
         <Route 
           path="/*" 

@@ -122,46 +122,176 @@ const Header = ({
             </div>
           </div>
 
-          {/* Search Bar */}
+          {/* Enhanced Search Bar */}
           <div className="flex-1 max-w-2xl mx-8">
-            <form onSubmit={handleSearch} className="relative">
-              <input
-                type="text"
-                placeholder={isAIActive ? "AI asistanına sorun..." : "Her şey burada!"}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-12"
-              />
-              <button 
-                type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                {isAIActive ? (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+            <div className="relative group">
+              <form onSubmit={handleSearch} className="relative">
+                <div className={`relative overflow-hidden rounded-xl transition-all duration-300 ${
+                  isAIActive 
+                    ? 'bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-transparent bg-clip-padding'
+                    : 'bg-white'
+                }`}>
+                  {/* Animated gradient border for AI mode */}
+                  {isAIActive && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 animate-pulse opacity-75">
+                      <div className="absolute inset-[2px] rounded-lg bg-white"></div>
+                    </div>
+                  )}
+                  
+                  <div className="relative flex items-center">
+                    {/* Search icon */}
+                    <div className="absolute left-4 z-10">
+                      {isAIActive ? (
+                        <div className="relative">
+                          <svg className="w-5 h-5 text-purple-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          <div className="absolute -inset-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur opacity-30 animate-ping"></div>
+                        </div>
+                      ) : (
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      )}
+                    </div>
+                    
+                    <input
+                      type="text"
+                      placeholder={isAIActive ? "✨ AI asistanına sorun..." : "🔍 Her şey burada!"}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className={`w-full pl-12 pr-16 py-3 text-sm font-medium placeholder-gray-500 bg-transparent focus:outline-none ${
+                        isAIActive 
+                          ? 'text-purple-800 placeholder-purple-400 border-0 focus:ring-0' 
+                          : 'text-gray-700 border border-gray-300 rounded-xl focus:border-purple-400 focus:ring-2 focus:ring-purple-100 shadow-sm'
+                      }`}
+                      style={{
+                        background: isAIActive ? 'transparent' : 'white'
+                      }}
+                    />
+                    
+                    {/* Enhanced search button */}
+                    <button 
+                      type="submit"
+                      className={`absolute right-2 p-2 rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                        isAIActive
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:from-purple-600 hover:to-pink-600'
+                          : 'bg-purple-600 text-white hover:bg-purple-700 shadow-md'
+                      }`}
+                    >
+                      {isAIActive ? (
+                        <div className="relative">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          <div className="absolute inset-0 bg-white opacity-20 rounded animate-ping"></div>
+                        </div>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Search suggestions for AI mode */}
+                {isAIActive && searchQuery.length === 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
+                    <div className="p-3">
+                      <p className="text-xs text-gray-500 mb-2">💡 Önerilen sorular:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          'Arkadaşımla akşam yemeğine çıkacağım beyaz tonda elbiseler öner',
+                          'Düğünde neler giyebilirim?',
+                          'Yeni gelenler ve beğenilenleri göster',
+                          'En çok satanlarda yorumları iyi olanlar'
+                        ].map((suggestion, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setSearchQuery(suggestion)}
+                            className="px-3 py-1 text-xs bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full hover:from-purple-200 hover:to-pink-200 transition-all duration-200 transform hover:scale-105"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </button>
-            </form>
+              </form>
+            </div>
           </div>
 
           {/* Right side controls */}
           <div className="flex items-center space-x-4">
-            {/* AI Toggle */}
+            {/* Enhanced AI Toggle */}
             <div className="flex items-center">
-              <label className="inline-flex items-center cursor-pointer">
+              <label className="inline-flex items-center cursor-pointer group">
                 <input 
                   type="checkbox" 
                   className="sr-only peer" 
                   checked={isAIActive}
                   onChange={handleAIToggle}
                 />
-                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                <span className="ml-3 text-sm font-medium text-gray-900">AI Arama</span>
+                
+                {/* Animated container for AI toggle */}
+                <div className={`relative transition-all duration-300 ${
+                  isAIActive ? 'transform scale-110' : ''
+                }`}>
+                  {/* Colorful animated border when AI is active */}
+                  {isAIActive && (
+                    <div className="absolute -inset-2 bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 rounded-full blur-sm opacity-60 animate-spin" style={{animationDuration: '3s'}}></div>
+                  )}
+                  
+                  {/* Main toggle */}
+                  <div className={`relative w-12 h-7 rounded-full transition-all duration-300 ${
+                    isAIActive 
+                      ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 shadow-lg' 
+                      : 'bg-gray-200'
+                  } peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300`}>
+                    
+                    {/* Toggle button */}
+                    <div className={`absolute top-[2px] left-[2px] bg-white rounded-full h-6 w-6 transition-all duration-300 flex items-center justify-center ${
+                      isAIActive ? 'translate-x-5 shadow-md' : ''
+                    }`}>
+                      {isAIActive && (
+                        <div className="relative">
+                          <svg className="w-3 h-3 text-purple-600 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                          </svg>
+                          <div className="absolute inset-0 bg-purple-400 rounded-full blur opacity-40 animate-ping"></div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Sparkle effects when active */}
+                    {isAIActive && (
+                      <>
+                        <div className="absolute top-1 right-1 w-1 h-1 bg-white rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+                        <div className="absolute bottom-1 left-2 w-1 h-1 bg-white rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+                        <div className="absolute top-2 left-1 w-0.5 h-0.5 bg-white rounded-full animate-ping" style={{animationDelay: '1.5s'}}></div>
+                      </>
+                    )}
+                  </div>
+                </div>
+                
+                <span className={`ml-3 text-sm font-medium transition-all duration-300 ${
+                  isAIActive 
+                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 font-semibold' 
+                    : 'text-gray-900'
+                }`}>
+                  {isAIActive ? '✨ AI Arama' : 'AI Arama'}
+                </span>
+                
+                {/* Floating particles effect */}
+                {isAIActive && (
+                  <div className="absolute -top-2 -bottom-2 -left-2 -right-2 pointer-events-none">
+                    <div className="absolute top-0 left-4 w-1 h-1 bg-purple-400 rounded-full animate-bounce" style={{animationDelay: '0s', animationDuration: '2s'}}></div>
+                    <div className="absolute top-2 right-8 w-0.5 h-0.5 bg-pink-400 rounded-full animate-bounce" style={{animationDelay: '0.7s', animationDuration: '2.5s'}}></div>
+                    <div className="absolute bottom-1 left-8 w-0.5 h-0.5 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '1.2s', animationDuration: '1.8s'}}></div>
+                  </div>
+                )}
               </label>
             </div>
 
