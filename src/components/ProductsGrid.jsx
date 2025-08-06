@@ -1,6 +1,7 @@
 import ProductCard from './ProductCard';
+import BundleCard from './BundleCard';
 
-const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
+const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all', aiSearchResults = [], aiBundleResults = [], addToCart, toggleFavorite, isFavorite, openProductDetail }) => {
   // Sample product data based on figma design
   const allProducts = [
     {
@@ -142,6 +143,16 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
 
   // Filtreleme fonksiyonu
   const filterProducts = () => {
+    // AI bundle sonuçları varsa onları göster
+    if (aiBundleResults.length > 0) {
+      return [];
+    }
+
+    // AI arama sonuçları varsa onları göster
+    if (aiSearchResults.length > 0) {
+      return aiSearchResults;
+    }
+
     let filtered = allProducts;
 
     // Kategori filtreleme
@@ -166,6 +177,12 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
 
   // Başlık belirleme
   const getTitle = () => {
+    if (aiBundleResults.length > 0) {
+      return `AI Sepet Önerileri: "${searchQuery}"`;
+    }
+    if (aiSearchResults.length > 0) {
+      return `AI Arama Sonuçları: "${searchQuery}"`;
+    }
     if (searchQuery.trim()) {
       return `"${searchQuery}" için arama sonuçları`;
     }
@@ -175,32 +192,70 @@ const ProductsGrid = ({ searchQuery = '', selectedCategory = 'all' }) => {
     return 'Tüm Ürünler';
   };
 
+  // Açıklama belirleme
+  const getDescription = () => {
+    if (aiBundleResults.length > 0) {
+      return `AI asistanı ${aiBundleResults.length} farklı sepet önerisi buldu`;
+    }
+    if (aiSearchResults.length > 0) {
+      return `AI asistanı ${products.length} ürün buldu`;
+    }
+    if (searchQuery.trim()) {
+      return `${products.length} ürün bulundu`;
+    }
+    if (selectedCategory !== 'all') {
+      return `${products.length} ürün bulundu`;
+    }
+    return `${products.length} ürün bulundu`;
+  };
+
   return (
     <main className="p-6">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{getTitle()}</h2>
-        <p className="text-gray-600">{products.length} ürün bulundu</p>
+        <p className="text-gray-600">{getDescription()}</p>
       </div>
 
-      {/* Products Grid */}
-      {products.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+      {/* Bundle Results */}
+      {aiBundleResults.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {aiBundleResults.map((bundle) => (
+            <BundleCard 
+              key={bundle.id} 
+              bundle={bundle} 
+              isAIRecommendation={true}
+            />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">🔍</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Ürün bulunamadı</h3>
-          <p className="text-gray-600">
-            {searchQuery.trim() 
-              ? `"${searchQuery}" için ürün bulunamadı. Farklı anahtar kelimeler deneyebilirsiniz.`
-              : 'Bu kategoride ürün bulunamadı.'
-            }
-          </p>
-        </div>
+        /* Products Grid */
+        products.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {products.map((product) => (
+                                             <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  isAIRecommendation={aiSearchResults.length > 0}
+                  addToCart={addToCart}
+                  toggleFavorite={toggleFavorite}
+                  isFavorite={isFavorite}
+                  openProductDetail={openProductDetail}
+                />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-gray-400 text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Ürün bulunamadı</h3>
+            <p className="text-gray-600">
+              {searchQuery.trim() 
+                ? `"${searchQuery}" için ürün bulunamadı. Farklı anahtar kelimeler deneyebilirsiniz.`
+                : 'Bu kategoride ürün bulunamadı.'
+              }
+            </p>
+          </div>
+        )
       )}
     </main>
   );
